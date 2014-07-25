@@ -9,3 +9,8 @@ It’s only a preliminary experiment from someone who isn’t a developer
 and hasn’t done much coding lately.
 
 This is my first GitHub repo so I'm still figuring things out.
+
+Note: make sure you update the path constant in the test section for your own system
+
+2014-07-25: The code works in playground and compiles to executable in Xcode6-Beta3 on my machine,
+but doesn't seem to work in Beta4.
