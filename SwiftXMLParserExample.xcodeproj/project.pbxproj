@@ -203,6 +203,7 @@
 		B01E925D1981FDA500168278 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INSTALL_PATH = /Users/Steven/Documents/Code/bin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -210,6 +211,7 @@
 		B01E925E1981FDA500168278 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				INSTALL_PATH = /Users/Steven/Documents/Code/bin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
