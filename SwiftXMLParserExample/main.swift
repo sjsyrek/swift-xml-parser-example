@@ -22,10 +22,6 @@ class Book: NSObject {                                  // object class for base
     var price: Double = 0.0
     var publish_date: String = ""                       // need to get NSDate to work here
     var desc: String = ""                               // I should probably strip out the \n's
-    
-    init() {
-        super.init()
-    }
 }
 
 // MARK: - SwiftXMLParser
@@ -123,7 +119,7 @@ class SwiftXMLParser: NSObject, NSXMLParserDelegate {
             currentItem = Book()
             if let id: AnyObject? = attributeDict["id"] {
                 if let item = currentItem? {
-                    item.id = String(id! as NSString)           // do I need all this optional unwrapping?
+                    item.id = String(format: id! as NSString)           // do I need all this optional unwrapping?
                 }
             }
         } else if elementName == "author" || elementName == "title" || elementName == "genre" || elementName == "price" || elementName == "publish_date" || elementName == "description" {
