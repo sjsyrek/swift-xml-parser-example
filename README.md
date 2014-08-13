@@ -14,3 +14,5 @@ Note: make sure you update the path constant in the test section for your own sy
 
 2014-07-25: The code works in playground and compiles to executable in Xcode6-Beta3 on my machine,
 but doesn't seem to work in Beta4.
+
+2014-08-13: Code works in compiler but not playground in Beta 5 (some issue with NSXMLParser)
