@@ -33,7 +33,7 @@ class Book: NSObject {                                  // object class for base
 }
 
 // MARK: - SwiftXMLParser
-class SwiftXMLParser: NSObject, NSXMLParserDelegate {
+class SwiftXMLParser: NSObject {
     var XMLfile: NSInputStream
     var parser: NSXMLParser
     var currentItem: Book?
@@ -51,7 +51,6 @@ class SwiftXMLParser: NSObject, NSXMLParserDelegate {
     init(fromFileAtPath path: String!) {                // initialize with path to a valid XML file
         XMLfile = NSInputStream(fileAtPath: path)!
         parser = NSXMLParser(stream: XMLfile)
-        super.init()
     }
     
     func getParsedItems() -> [Book] {
@@ -101,7 +100,7 @@ class SwiftXMLParser: NSObject, NSXMLParserDelegate {
         lastDuration = NSDate.timeIntervalSinceReferenceDate() - startTime
     }
     
-    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName: String?, attributes attributeDict: [NSObject : AnyObject]) {
+    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         if elementName == "book" {
             currentItem = Book()
             if let id: AnyObject? = attributeDict["id"],        // avoiding the pyramid of doom
@@ -115,7 +114,7 @@ class SwiftXMLParser: NSObject, NSXMLParserDelegate {
         }
     }
     
-    func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName: String?) {
+    func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if let item = currentItem {
             if elementName == "book" {
                 finishedCurrentItem()
@@ -152,6 +151,8 @@ class SwiftXMLParser: NSObject, NSXMLParserDelegate {
     // For other methods defined on the NSXMLParserDelegate protocol, see
     // https://developer.apple.com/library/mac/documentation/Cocoa/Reference/NSXMLParserDelegate_Protocol/Reference/Reference.html#//apple_ref/occ/intfm/NSXMLParserDelegate/
 }
+
+extension SwiftXMLParser: NSXMLParserDelegate {}
 
 // Test procedures
 
