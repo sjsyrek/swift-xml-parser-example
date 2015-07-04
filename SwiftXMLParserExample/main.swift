@@ -52,7 +52,7 @@ class SwiftXMLParser: NSObject {
         }
     }
     
-    init(fromFileAtPath path: String) {                // initialize with path to a valid XML file
+    init(fromFileAtPath path: String!) {                // initialize with path to a valid XML file
         XMLfile = NSInputStream(fileAtPath: path)!
         parser = NSXMLParser(stream: XMLfile)
     }
@@ -110,8 +110,8 @@ class SwiftXMLParser: NSObject {
         if elementName == "book" {
             currentItem = Book()
             if let id: AnyObject? = attributeDict["id"],        // avoiding the pyramid of doom
-                   item = currentItem {
-                       item.id = id as! String
+                item = currentItem {
+                    item.id = id as! String
             }
         } else if elementNames.contains(elementName) {
             currentString = ""
@@ -165,15 +165,5 @@ extension SwiftXMLParser: NSXMLParserDelegate {} // Make parser objects their ow
 let path = "/Users/Steven/Transporter/Steve's Cloud/Code/Swift/books.xml"
 let myParser = SwiftXMLParser(fromFileAtPath: path)
 myParser.start()
-let items = myParser.getParsedItems()
 print("Last parse took \(myParser.getLastDuration()) seconds.")
-print("Parsed items:\n \(items)") // objects only
-print("Subscript test:")
-let sub0 = myParser[0]
-let sub1 = myParser[1]
-let sub2 = myParser[2]
-print(sub0) // object only
-print(sub1)
-print(sub2)
-print("Display items test:")
 myParser.displayItems()
