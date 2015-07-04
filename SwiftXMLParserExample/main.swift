@@ -1,5 +1,5 @@
-// main.swift
 // SwiftXMLParserExample
+// main.swift
 //
 // Copyright 2015 Steven J. Syrek
 //
@@ -22,13 +22,13 @@ import Cocoa
 import Foundation
 
 // MARK: - Book
-class Book: NSObject {                                  // object class for base element in XML file after root
+class Book: NSObject {                                  // object class for base element in XML file after <root>
     var id: String = ""
     var author: String = ""
     var title: String = ""
     var genre: String = ""
     var price: Double = 0.0
-    var publish_date: String = ""                       // need to get NSDate to work here
+    var publish_date: String = ""                       // maybe get NSDate to work here
     var desc: String = ""                               // I should probably strip out the \n's
 }
 
@@ -37,7 +37,7 @@ class SwiftXMLParser: NSObject {
     var XMLfile: NSInputStream
     var parser: NSXMLParser
     var currentItem: Book?
-    var parsedItems: [Book] = []                        // final result of parse is stored here
+    var parsedItems: [Book]?                            // final result of parse is stored here
     var elementNames = ["author", "title", "genre", "price", "publish_date", "description"]
     var currentString: String = ""
     var storingCharacters = false
@@ -45,15 +45,19 @@ class SwiftXMLParser: NSObject {
     var lastDuration = NSTimeInterval()
     var done = true
     subscript(i: Int) -> Book {                         // so we can index right into the array of results
-        return parsedItems[i]
+        if let items = getParsedItems() {
+            return items[i]
+        } else {
+            return Book()                               // need to return something here in case the parse fails
+        }
     }
     
-    init(fromFileAtPath path: String!) {                // initialize with path to a valid XML file
+    init(fromFileAtPath path: String) {                // initialize with path to a valid XML file
         XMLfile = NSInputStream(fileAtPath: path)!
         parser = NSXMLParser(stream: XMLfile)
     }
     
-    func getParsedItems() -> [Book] {
+    func getParsedItems() -> [Book]? {
         return parsedItems
     }
     
@@ -62,14 +66,16 @@ class SwiftXMLParser: NSObject {
     }
     
     func displayItems() {
-        for item in parsedItems {
-            print("id: \(item.id)")
-            print("author: \(item.author)")
-            print("title: \(item.title)")
-            print("genre: \(item.genre)")
-            print("price: \(item.price)")
-            print("publish_date: \(item.publish_date)")
-            print("description: \(item.desc)\n")
+        if let items = getParsedItems() {
+            for item in items {
+                print("id: \(item.id)")
+                print("author: \(item.author)")
+                print("title: \(item.title)")
+                print("genre: \(item.genre)")
+                print("price: \(item.price)")
+                print("publish_date: \(item.publish_date)")
+                print("description: \(item.desc)\n")
+            }
         }
     }
     
@@ -87,7 +93,7 @@ class SwiftXMLParser: NSObject {
     }
     
     func finishedCurrentItem() {
-        parsedItems.append(currentItem!)                // keep track of parsed Book objects
+        parsedItems!.append(currentItem!)               // keep track of parsed Book objects
     }
     
     // MARK: - NSXMLParserDelegate
@@ -106,7 +112,6 @@ class SwiftXMLParser: NSObject {
             if let id: AnyObject? = attributeDict["id"],        // avoiding the pyramid of doom
                    item = currentItem {
                        item.id = id as! String
-                       // item.id = String(format: (id! as! NSString) as NSString as String)
             }
         } else if elementNames.contains(elementName) {
             currentString = ""
@@ -116,22 +121,24 @@ class SwiftXMLParser: NSObject {
     
     func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if let item = currentItem {
-            if elementName == "book" {
+            switch elementName {
+            case "book":
                 finishedCurrentItem()
-            } else if elementName == "author" {
+            case "author":
                 item.author = currentString
-            } else if elementName == "title" {
+            case "title":
                 item.title = currentString
-            } else if elementName == "genre" {
+            case "genre":
                 item.genre = currentString
-            } else if elementName == "price" {
+            case "price":
                 let price = currentString as NSString
                 item.price = price.doubleValue
-            } else if elementName == "publish_date" {
+            case "publish_date":
                 item.publish_date = currentString
-                // item.publish_date = NSDate(string: currentString)
-            } else if elementName == "description" {
+            case "description":
                 item.desc = currentString
+            default:
+                break
             }
             storingCharacters = false
         }
@@ -152,14 +159,21 @@ class SwiftXMLParser: NSObject {
     // https://developer.apple.com/library/mac/documentation/Cocoa/Reference/NSXMLParserDelegate_Protocol/Reference/Reference.html#//apple_ref/occ/intfm/NSXMLParserDelegate/
 }
 
-extension SwiftXMLParser: NSXMLParserDelegate {}
+extension SwiftXMLParser: NSXMLParserDelegate {} // Make parser objects their own delegates
 
 // Test procedures
-
 let path = "/Users/Steven/Transporter/Steve's Cloud/Code/Swift/books.xml"
 let myParser = SwiftXMLParser(fromFileAtPath: path)
 myParser.start()
-myParser.getParsedItems()
+let items = myParser.getParsedItems()
 print("Last parse took \(myParser.getLastDuration()) seconds.")
-myParser[0]     // subscript test
+print("Parsed items:\n \(items)") // objects only
+print("Subscript test:")
+let sub0 = myParser[0]
+let sub1 = myParser[1]
+let sub2 = myParser[2]
+print(sub0) // object only
+print(sub1)
+print(sub2)
+print("Display items test:")
 myParser.displayItems()
